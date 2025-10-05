@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./static/styles.css">
+  <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+  <title>Debug - User Information</title>
+</head>
+<body>
+  <div class="container">
+    <div style="padding:20px">
+      <h1>Debug: Current User Information</h1>
+      <div id="user-info">Loading...</div>
+      <p><a href="/">← Back to App</a> | <a href="/logout">Logout</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Fetch current user information
+    fetch('/.auth/me')
+      .then(response => response.json())
+      .then(data => {
+        const userInfo = document.getElementById('user-info');
+        if (data && data.length > 0) {
+          const user = data[0];
+          userInfo.innerHTML = `
+            <h3>Authentication Status: ✅ Authenticated</h3>
+            <p><strong>User ID:</strong> ${user.userId || 'Not available'}</p>
+            <p><strong>Provider:</strong> ${user.identityProvider || 'Not available'}</p>
+            <p><strong>User Details:</strong> ${user.userDetails || 'Not available'}</p>
+            <h4>Current Roles:</h4>
+            <ul>
+              ${user.userRoles ? user.userRoles.map(role => `<li>${role}</li>`).join('') : '<li>No roles assigned</li>'}
+            </ul>
+            <h4>Claims:</h4>
+            <pre style="background: #f5f5f5; padding: 10px; overflow: auto;">${JSON.stringify(user.claims || {}, null, 2)}</pre>
+          `;
+        } else {
+          userInfo.innerHTML = `
+            <h3>Authentication Status: ❌ Not Authenticated</h3>
+            <p>You are not currently logged in.</p>
+            <p><a href="/login">Click here to login</a></p>
+          `;
+        }
+      })
+      .catch(error => {
+        document.getElementById('user-info').innerHTML = `
+          <h3>Error: Could not fetch user information</h3>
+          <p>Error: ${error.message}</p>
+          <p><a href="/login">Try logging in</a></p>
+        `;
+      });
+  </script>
+</body>
+</html>

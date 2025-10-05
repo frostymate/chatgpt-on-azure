@@ -1,13 +1,17 @@
 {
   "routes": [
     {
+      "route": "/debug",
+      "allowedRoles": ["authenticated"]
+    },
+    {
       "route": "/",
-      "allowedRoles": ["invited"]
+      "allowedRoles": ["authenticated"]
     },
     {
       "route": "/api/*",
       "methods": ["POST", "GET"],
-      "allowedRoles": ["invited"]
+      "allowedRoles": ["authenticated"]
     },
     {
       "route": "/login",
